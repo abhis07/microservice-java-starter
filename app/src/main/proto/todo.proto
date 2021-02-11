@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package todo;
+
+import "google/protobuf/wrappers.proto";
+import "google/api/annotations.proto";
+
+option java_package = "com.github.starter.proto";
+option java_multiple_files = false;
+option java_outer_classname = "Todos";
+option go_package = ".;todo";
+
+message Todo {
+  string id = 1;
+  string description = 2;
+  string created = 3;
+  string action_by = 4;
+  string status = 5;
+  string updated = 6;
+};
+
+message TodoList {
+  repeated Todo data = 1;
+};
+
+message Params {
+  bool completed = 1;
+};
+
+message SearchRequest {
+    string action_by=1;
+    string status=2;
+    string created=3;
+};
+
+message Status {
+  string value = 1;
+}
+
+service TodoService {
+  rpc getTodos(SearchRequest) returns(TodoList) {
+    option (google.api.http) = {
+        get: "/todo.search"
+    };
+  };
+  rpc save(Todo) returns(Todo) {
+    option (google.api.http) = {
+      post: "/todo.save"
+    };
+  };
+  rpc update(Todo) returns(Todo){
+    option (google.api.http) = {
+      post: "/todo.update"
+    };
+  };
+
+  rpc findById(google.protobuf.StringValue) returns(Todo) {
+    option (google.api.http) = {
+        get: "/todo.findById"
+    };
+  };
+  rpc delete(google.protobuf.StringValue) returns(google.protobuf.BoolValue) {
+    option (google.api.http) = {
+        delete: "/todo.delete"
+    };
+  };
+
+  rpc status(Params) returns(Status) {
+    option (google.api.http) = {
+      get: "/todo.status"
+    };
+  };
+
+}
+
